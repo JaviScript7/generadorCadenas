@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generar CADENA </title>
+    <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.1/css/bulma.min.css">
+
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/space.ico')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/all.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome-pro/web/css/all.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css')}}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/component.css')}}">
+
+    <script src="{{ url_for('static', filename='bootstrap/js/jquery-3.5.1.slim.min.js')}}" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='bootstrap/js/popper.min.js')}}" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+    <script>(function(e,t,n){var r=e.querySelectorAll("html")[0];r.className=r.className.replace(/(^|\s)no-js(\s|$)/,"$1js$2")})(document,window,0);</script>
+</head>
+
+<body>
+
+
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", () => {
+            const boton = document.querySelector(".navbar-burger");
+            const menu = document.querySelector(".navbar-menu");
+            boton.onclick = () => {
+                menu.classList.toggle("is-active");
+                boton.classList.toggle("is-active");
+            };
+        });
+    </script>
+
+    <section class="section">
+        <div class="columns">
+            <div class="column">
+                <h1 class="is-size-1">Generar CADENA </h1>
+
+                <form method="POST" action="{{url_for('procesar')}}" enctype="multipart/form-data">
+                    <div class="field">
+                        <div class="file has-name">
+                            <label class="file-label">
+                                <input class="file-input" type="file" name="excel" required accept=".xlsx">
+                                <span class="file-cta">
+                                    <span class="file-icon">
+                                        <i class="fas fa-upload"></i>
+                                    </span>
+                                    <span class="file-label">
+                                        Seleccione el EXCEL
+                                    </span>
+                                </span>
+                                <span class="file-name" id="nombreExcel">
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                    <input class="button is-primary" type="submit" value="Generar Cadena">
+                </form>
+            </div>
+
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const $excel = document.querySelector("[name='excel']");
+            const $nombreExcel = document.querySelector("#nombreExcel");
+
+            $excel.onchange = () => {
+                const archivo = $excel.files[0];
+                $nombreExcel.textContent = archivo.name;
+            };
+        });
+    </script>
+
+
+<!-- SECCION PARA MOSTRAR EL CONTENIDO Y PODER DESCARGAR O BORRAR -->
+<div class="row">
+    <div class="col-12 col-md-2"></div>
+    <div class="col-12 col-md-8 ">
+      <div class="table-responsive-sm">
+        <table class="table  table-bordered text-center table-hover">
+          <thead class="thead-dark">
+            <tr>
+              <th><i class="fas fa-meteor"></i></th>
+              <th><i class="fad fa-satellite"></i> Nombre</th>
+              <th><i class="fad fa-planet-ringed"></i> Opciones</th>
+  
+            </tr>
+          </thead>
+          <tbody>
+            {% for name in ficheros %}
+            <tr>
+              <td><i class="fas fa-user-astronaut"></i></td>
+              <td>{{ name }}</td>
+              <td>
+                <a href="/return-files/{{name}}" target="blank" style="text-decoration: none;"><button class='btn  btn-outline-success'><i class="fas fa-download"></i> </button></a>
+  
+                  <button class='open-Modal btn  btn-outline-danger' data-id="{{name}}" data-toggle="modal" data-target="#eliminar">
+                    <i class="fas fa-trash"></i>
+                  </button>
+  
+              </td>
+  
+              {% endfor %}
+            </tr>
+  
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="col-12 col-md-2"></div>
+  </div>
+
+  <!-- Modal -->
+<div class="modal fade" id="eliminar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel"><i class="fad fa-trash-alt" class="text-danger"></i> Eliminar Archivo</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Eliminar el siguiente archivo:
+  
+          <input class="text-danger" type="text" readonly="readonly" name="DNI" id="DNI" value="" style="border: 0;"/>
+  
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fas fa-times-circle" style="font-size:20pt;"></i></button>
+            <button type="button" class="btn btn-success" onclick="a()"><i class="fas fa-check-circle" style="font-size:20pt;"></i></button>
+  
+  
+  
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+</body>
+
+<script type="text/javascript">
+    var Global = {
+      data: null
+  };
+  
+    $(document).on("click", ".open-Modal", function () {
+      var myDNI = $(this).data('id');
+      Global.data = myDNI
+      console.log(myDNI);
+      $(".modal-body #DNI").val( myDNI );
+    });
+  
+    function a(){
+      dato = Global.data;
+      console.log(Global.data);
+      return  location.href = "/removefile/"+dato;
+    }
+    </script>
+  
+    <script src="{{ url_for('static', filename='js/custom-file-input.js')}}" ></script>
+    <script src="{{ url_for('static', filename='js/jquery.custom-file-input.js')}}" ></script>
+
+</html>
